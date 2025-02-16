@@ -1,15 +1,10 @@
-const path = require("path");
 const webpack = require("webpack");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = {
-  entry: "./src/client/index.js",
-  mode: "development",
-  devtool: "source-map",
-  resolve: {
-    extensions: [".js"],
-  },
+  entry: ["./src/client/index.js"],
   module: {
     rules: [
       {
@@ -21,10 +16,6 @@ module.exports = {
             presets: ["@babel/preset-env"],
           },
         },
-      },
-      {
-        test: /\.scss$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
       },
     ],
   },
@@ -43,4 +34,8 @@ module.exports = {
       protectWebpackAssets: false,
     }),
   ],
+  optimization: {
+    minimizer: [new CssMinimizerPlugin()],
+    minimize: true,
+  },
 };

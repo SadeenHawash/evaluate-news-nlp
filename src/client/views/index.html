@@ -9,9 +9,10 @@
   <body>
     <main>
       <div class="container">
-        <form id="urlForm">
+        <form id="urlForm" onsubmit="return Client.handleSubmit(event)">
+          <label for="url">Enter an Article URL:</label>
           <input
-            id="name"
+            id="url"
             type="text"
             name="url"
             placeholder="Enter URL"
@@ -20,11 +21,8 @@
           <button id="submitButton" type="submit">Submit</button>
         </form>
       </div>
-
       <div id="results">
-        <div id="results">
-          <h2>Results:</h2>
-        </div>
+        <h3>Analysis Result:</h3>
       </div>
     </main>
   </body>

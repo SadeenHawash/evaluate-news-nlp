@@ -1,5 +1,5 @@
 // js files
-//import { handleSubmit } from "./js/formHandler";
+import { handleSubmit } from "./js/formHandler";
 
 //alert("I EXIST");
 // console.log("CHANGE!!");
@@ -11,3 +11,5 @@ import "./styles/form.scss";
 import "./styles/header.scss";
 import "./styles/resets.scss";
 import "./styles/style.scss";
+
+export { handleSubmit };

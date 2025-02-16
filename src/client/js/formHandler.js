@@ -1,28 +1,79 @@
-// Replace checkForName with a function that checks the URL
-import { checkForName } from "./nameChecker";
+import axios from "axios";
+import DOMPurify from "dompurify";
 
-// If working on Udacity workspace, update this with the Server API URL e.g. `https://wfkdhyvtzx.prod.udacity-student-workspaces.com/api`
-// const serverURL = 'https://wfkdhyvtzx.prod.udacity-student-workspaces.com/api'
-const serverURL = "https://localhost:8000/api";
+const serverURL = "http://localhost:8000/analyze-url";
+const resultsContainer = document.getElementById("results");
+const inputUrl = document.getElementById("url");
 
-const form = document.getElementById("urlForm");
-form.addEventListener("submit", handleSubmit);
-
-function handleSubmit(event) {
+async function handleSubmit(event) {
   event.preventDefault();
 
-  // Get the URL from the input field
-  const formText = document.getElementById("name").value;
+  const url = inputUrl.value.trim();
 
-  // This is an example code that checks the submitted name. You may remove it from your code
-  checkForName(formText);
+  if (!url) {
+    showError("URL cannot be blank.");
+    return;
+  }
 
-  // Check if the URL is valid
+  // Reset results container for each new submission
+  resultsContainer.innerHTML = "";
 
-  // If the URL is valid, send it to the server using the serverURL constant above
+  if (!Client.checkForUrl(url)) {
+    showError(
+      "Invalid URL. Please enter a valid URL (e.g., https://example.com)."
+    );
+    return;
+  }
+
+  toggleLoadingState(true);
+
+  try {
+    const sanitizedUrl = DOMPurify.sanitize(url);
+    const response = await sendToServer(sanitizedUrl);
+    if (response) {
+      updateUI(response);
+    } else {
+      showError("No valid analysis data received.");
+    }
+  } catch (error) {
+    console.error("Error fetching analysis:", error);
+    showError("Failed to analyze the URL. Please try again.");
+  }
 }
 
-// Function to send data to the server
+async function sendToServer(url) {
+  try {
+    const response = await axios.post(serverURL, { url });
+    return response.data;
+  } catch (error) {
+    console.error("Error sending request:", error);
+    return null;
+  }
+}
 
-// Export the handleSubmit function
+function updateUI(data) {
+  resultsContainer.innerHTML = `
+    <h2>Sentiment Analysis:</h2><br/><br/>
+    <p><strong>Sentiment:</strong> ${data.sentiment || "Not available"}</p><br/>
+    <p><strong>Content Type:</strong> ${
+      data.contentType || "Not available"
+    }</p><br/>
+    <p><strong>Input Text Preview:</strong> "${
+      data.inputTextPreview || "No text preview available"
+    }"</p>
+  `;
+}
+
+function showError(message) {
+  if (!resultsContainer) return;
+  resultsContainer.innerHTML = `<p style="color: red;"><strong>Error:</strong> ${message}</p>`;
+}
+
+function toggleLoadingState(isLoading) {
+  const submitButton = document.querySelector("button[type='submit']");
+  if (submitButton) submitButton.disabled = isLoading;
+  if (!resultsContainer) return;
+  resultsContainer.innerHTML = isLoading ? "<p>Loading...</p>" : "";
+}
+
 export { handleSubmit };
