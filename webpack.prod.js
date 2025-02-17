@@ -31,7 +31,10 @@ module.exports = merge(common, {
     new MiniCssExtractPlugin({
       filename: "style.[contenthash].css",
     }),
-    new WorkboxPlugin.GenerateSW(),
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+    }),
   ],
   optimization: {
     minimize: true,

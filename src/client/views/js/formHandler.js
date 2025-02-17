@@ -1,5 +1,6 @@
 import axios from "axios";
 import DOMPurify from "dompurify";
+import { checkForUrl } from "./urlChecker";
 
 const serverURL = "http://localhost:8000/analyze-url";
 const resultsContainer = document.getElementById("results");
@@ -18,7 +19,7 @@ async function handleSubmit(event) {
   // Reset results container for each new submission
   resultsContainer.innerHTML = "";
 
-  if (!Client.checkForUrl(url)) {
+  if (!checkForUrl(url)) {
     showError(
       "Invalid URL. Please enter a valid URL (e.g., https://example.com)."
     );
